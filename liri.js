@@ -49,7 +49,7 @@ function concertThis() {
             message: "What artist/band would you like information on their concerts?.",
         }
     ]).then(function (answers) {
-        let band = answers.band.replace(/ /g,"%20");;
+        let band = answers.band.replace(/ /g, "%20");;
         // console.log(band);
         let appId = "app_id=" + bandsInTown.appID;
         // console.log(appId);
@@ -58,30 +58,35 @@ function concertThis() {
         axios.get(url).then(
             function (response) {
                 let eventArrary = response.data;
-                let venueArrary = [];
-                eventArrary.forEach(i => {
-                    let eventObj = {};
-                    eventObj.venue = i.venue.name;
-                    // console.log("Venue Name:",venue);
-                    eventObj.locCity = i.venue.city;
-                    // console.log("Venue City:",locCity);
-                    eventObj.locCountry = i.venue.country
-                    // console.log("Venue Country:",locCountry);
-                    eventObj.eventDate = i.datetime;
-                    // console.log(eventDate);
-                    venueArrary.push(eventObj);
-                    // console.log(JSON.stringify(eventObj));
-                    // console.log(JSON.stringify(venueArrary));
-                });
-                // console.log(venueArray);
-                venueArrary.forEach(i => {
-                    console.log("Venue Name:", i.venue, "\nLocation:", i.locCity + "," + i.locCountry,"\nEvent Date:", i.eventDate);
-                    console.log("---------------");
-                }); {
-                    
-                
+                switch (!eventArrary || !eventArrary.length) {
+                    case true:
+                        console.log("This Artist or Band doesn't have any Concerts currently");
+                        break;
+                    default:
+                        let venueArrary = [];
+                        eventArrary.forEach(i => {
+                            let eventObj = {};
+                            eventObj.venue = i.venue.name;
+                            // console.log("Venue Name:",venue);
+                            eventObj.locCity = i.venue.city;
+                            // console.log("Venue City:",locCity);
+                            eventObj.locCountry = i.venue.country
+                            // console.log("Venue Country:",locCountry);
+                            eventObj.eventDate = i.datetime;
+                            // console.log(eventDate);
+                            venueArrary.push(eventObj);
+                            // console.log(JSON.stringify(eventObj));
+                            // console.log(JSON.stringify(venueArrary));
+                        });
+                        // console.log(venueArray);
+                        venueArrary.forEach(i => {
+                            console.log("Venue Name:", i.venue, "\nLocation:", i.locCity + "," + i.locCountry, "\nEvent Date:", i.eventDate);
+                            console.log("---------------");
+                        });
+                        break;
+
                 }
-                 
+
 
                 // let venue = response.venue.name;
                 // console.log(venue);
