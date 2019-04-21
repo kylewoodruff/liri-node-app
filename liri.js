@@ -2,6 +2,7 @@ require("dotenv").config();
 let keys = require("./keys.js");
 let inquirer = require("inquirer");
 let axios = require("axios");
+let moment = require('moment');
 
 let spotify = keys.spotify;
 // console.log(spotify);
@@ -11,42 +12,43 @@ let omdb = keys.ombd;
 let bandsInTown = keys.bandsInTown;
 // console.log(bandsInTown);
 
+function initCommand() {
+    inquirer.prompt([
+        {
+            type: "list",
+            name: "choice",
+            message: "I am LIRI, I can do several things for you.  Please select from the list of my available commands.",
+            choices: ["Concert this", "Spotify this song", "Movie this", "Do what I say"]
+        }
+    ]).then(function (answers) {
+        let action = answers.choice;
+        switch (action) {
+            case "Concert this":
+                concertThis();
+                break;
 
-inquirer.prompt([
-    {
-        type: "list",
-        name: "choice",
-        message: "I am LIRI, I can do several things for you.  Please select from the list of my available comands.",
-        choices: ["Concert this", "Spotify this song", "Movie this", "Do what I say"]
-    }
-]).then(function (answers) {
-    let action = answers.choice;
-    switch (action) {
-        case "Concert this":
-            concertThis();
-            break;
+            case "Spotify this song":
+                spotifyThis();
+                break;
 
-        case "Spotify this song":
-            spotifyThis();
-            break;
+            case "Movie this":
+                movieThis();
+                break;
 
-        case "Movie this":
-            movieThis();
-            break;
-
-        case "Do what I say":
-            doThis();
-            break;
-    }
+            case "Do what I say":
+                doThis();
+                break;
+        }
 
 
-});
+    });
+}
 function concertThis() {
     inquirer.prompt([
         {
             type: "input",
             name: "band",
-            message: "What artist/band would you like information on their concerts?.",
+            message: "Which artist/band's upcomming concert information would you like?.",
         }
     ]).then(function (answers) {
         let band = answers.band.replace(/ /g, "%20");;
@@ -60,7 +62,8 @@ function concertThis() {
                 let eventArrary = response.data;
                 switch (!eventArrary || !eventArrary.length) {
                     case true:
-                        console.log("This Artist or Band doesn't have any Concerts currently");
+                        console.log("---------------", "\nThis Artist or Band doesn't have any Concerts currently", "\n---------------");
+                        initCommand();
                         break;
                     default:
                         let venueArrary = [];
@@ -72,7 +75,7 @@ function concertThis() {
                             // console.log("Venue City:",locCity);
                             eventObj.locCountry = i.venue.country
                             // console.log("Venue Country:",locCountry);
-                            eventObj.eventDate = i.datetime;
+                            eventObj.eventDate = moment(i.datetime).format("MM DD YYYY");
                             // console.log(eventDate);
                             venueArrary.push(eventObj);
                             // console.log(JSON.stringify(eventObj));
@@ -83,25 +86,29 @@ function concertThis() {
                             console.log("Venue Name:", i.venue, "\nLocation:", i.locCity + "," + i.locCountry, "\nEvent Date:", i.eventDate);
                             console.log("---------------");
                         });
+                        initCommand();
                         break;
-
                 }
-
-
-                // let venue = response.venue.name;
-                // console.log(venue);
-
             });
     });
-
-
 };
 
-function bandsInTownCall(band) {
-
-}
-
 function spotifyThis() {
+    switch (answer === "") {
+        case true:
+
+            break;
+
+        default:
+            let artists = [];
+            let song = "";
+            let songURL = "";
+            let album = "";
+            break;
+    }
+
+
+
 
 };
 
@@ -112,4 +119,4 @@ function doThis() {
 
 };
 
-
+initCommand();
