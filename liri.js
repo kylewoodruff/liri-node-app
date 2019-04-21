@@ -63,7 +63,7 @@ function concertThis() {
                 switch (!eventArrary || !eventArrary.length) {
                     case true:
                         console.log("---------------", "\nThis Artist or Band doesn't have any Concerts currently", "\n---------------");
-                        initCommand();
+                        setTimeout(function(){initCommand(); }, 1500);
                         break;
                     default:
                         let venueArrary = [];
@@ -86,7 +86,7 @@ function concertThis() {
                             console.log("Venue Name:", i.venue, "\nLocation:", i.locCity + "," + i.locCountry, "\nEvent Date:", i.eventDate);
                             console.log("---------------");
                         });
-                        initCommand();
+                        setTimeout(function(){initCommand(); }, 1500);
                         break;
                 }
             });
