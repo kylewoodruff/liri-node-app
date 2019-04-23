@@ -63,7 +63,7 @@ function concertThis() {
                 switch (!eventArrary || !eventArrary.length) {
                     case true:
                         console.log("---------------", "\nThis Artist or Band doesn't have any Concerts currently", "\n---------------");
-                        setTimeout(function(){initCommand(); }, 1500);
+                        setTimeout(function () { initCommand(); }, 1500);
                         break;
                     default:
                         let venueArrary = [];
@@ -75,7 +75,7 @@ function concertThis() {
                             // console.log("Venue City:",locCity);
                             eventObj.locCountry = i.venue.country
                             // console.log("Venue Country:",locCountry);
-                            eventObj.eventDate = moment(i.datetime).format("MM DD YYYY");
+                            eventObj.eventDate = moment(i.datetime).format("MM/DD/YYYY");
                             // console.log(eventDate);
                             venueArrary.push(eventObj);
                             // console.log(JSON.stringify(eventObj));
@@ -86,9 +86,13 @@ function concertThis() {
                             console.log("Venue Name:", i.venue, "\nLocation:", i.locCity + "," + i.locCountry, "\nEvent Date:", i.eventDate);
                             console.log("---------------");
                         });
-                        setTimeout(function(){initCommand(); }, 1500);
+                        setTimeout(function () { initCommand(); }, 1500);
                         break;
                 }
+            }).catch(function (error) {
+                console.log("---------------","\nThis is not a valid Artist/Band.  \nPlease enter the band name again.", "\n---------------");
+                
+                setTimeout(function () { concertThis(); }, 1500);
             });
     });
 };
