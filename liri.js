@@ -116,7 +116,6 @@ function spotifyThis() {
                 .then(function (data) {
                     // console.log(data);
                     console.log("---------------","\nArtist:", data.artists[0].name, "\nSong name:", data.name, "\nPreview Link:", data.external_urls.spotify,"\n---------------");
-                    console.log("---------------");
                 })
                 .catch(function (err) {
                     console.error('Error occurred: ' + err);
