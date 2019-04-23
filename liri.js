@@ -49,10 +49,10 @@ function concertThis() {
         {
             type: "input",
             name: "band",
-            message: "Which artist/band's upcomming concert information would you like?.",
+            message: "What Artist's or Band's concert information can I get you?",
         }
     ]).then(function (answers) {
-        let band = answers.band.replace(/ /g, "%20");;
+        let band = answers.band.replace(/ /g, "%20");
         // console.log(band);
         let appId = "app_id=" + bandsInTown.appID;
         // console.log(appId);
@@ -63,8 +63,8 @@ function concertThis() {
                 let eventArrary = response.data;
                 switch (!eventArrary || !eventArrary.length) {
                     case true:
-                        console.log("---------------", "\nThis Artist or Band doesn't have any Concerts currently", "\n---------------");
-                        setTimeout(function () { initCommand(); }, 1500);
+                        console.log("---------------", "\nOh, no! This Artist or Band doesn't have any concerts currently.", "\n---------------");
+                        setTimeout(function () { newRequest(); }, 1500);
                         break;
                     default:
                         let venueArrary = [];
@@ -91,7 +91,7 @@ function concertThis() {
                         break;
                 }
             }).catch(function (error) {
-                console.log("---------------", "\nThis is not a valid Artist/Band.  \nPlease enter the band name again.", "\n---------------");
+                console.log("---------------", "\nI'm Sorry that was not a valid Artist or Band.  \nPlease enter the band name again.", "\n---------------");
 
                 setTimeout(function () { concertThis(); }, 1500);
             });
@@ -115,7 +115,7 @@ function spotifyThis() {
                 .request('https://api.spotify.com/v1/tracks/0hrBpAOgrt8RXigk83LLNE')
                 .then(function (data) {
                     // console.log(data);
-                    console.log("---------------", "\nArtist:", data.artists[0].name, "\nSong name:", data.name, "\nPreview Link:", data.external_urls.spotify, "\n---------------");
+                    console.log("---------------", "\nArtist:", data.artists[0].name, "\nSong name:", data.name, "\nAlbum:",data.album.name,"\nPreview Link:", data.external_urls.spotify, "\n---------------");
                     setTimeout(function () { newRequest(); }, 1500);
                 })
                 .catch(function (err) {
@@ -133,7 +133,7 @@ function spotifyThis() {
                 let songArrary = data.tracks.items
 
                 songArrary.forEach(i => {
-                    console.log("---------------", "\nArtist:", i.artists[0].name, "\nSong name:", i.name, "\nPreview Link:", i.external_urls.spotify, "\n---------------");
+                    console.log("---------------", "\nArtist:", i.artists[0].name, "\nSong name:", i.name, "\nAlbum:",i.album.name,"\nPreview Link:", i.external_urls.spotify, "\n---------------");
                 });
                 setTimeout(function () { newRequest(); }, 1500);
             });
@@ -151,10 +151,56 @@ function movieThis() {
     //Plot of the movie
     //Actors in the movie
     //no movies Select Mr. Nobody
-
-    axios.get(url).then(
-        function (response) {});
-
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "movie",
+            message: "What movie would you like me to look up?",
+        }
+    ]).then(function (answers) {
+        let title = "t=" + answers.movie.replace(/ /g, "%20");
+        let key = "apikey=" + omdb.key;
+        let queryUrl = "http://www.omdbapi.com/?" + key + "&";
+        let url = queryUrl + title;
+        // console.log(url);
+        if (!answers.movie) {
+            let title = "t=Mr.+Nobody";
+            axios.get(queryUrl + title).then(function (response) {
+                let movie = response.data;
+                // console.log(movie);
+                let name = movie.Title;
+                let year = movie.Year;
+                let imdbRating = movie.imdbRating;
+                let rtr = movie.Ratings[1].Value;
+                let country = movie.Country;
+                let language = movie.Language;
+                let plot = movie.Plot;
+                let actors = movie.Actors;
+                console.log("---------------", "\nMovie:", name, "\nYear:", year, "\nRatings: \tIMDB:", imdbRating, "\tRotten Tomatoes:", rtr, "\nCountry:", country, "\nLanguage:", language, "\nActors:", actors,"\nPlot:", plot, "\n---------------");
+                setTimeout(function () { newRequest(); }, 1500);
+            })
+        } else {
+            axios.get(url).then(
+                function (response) {
+                    // console.log(response.data);
+                    let movie = response.data;
+                    // console.log(movie);
+                    let name = movie.Title;
+                    let year = movie.Year;
+                    let imdbRating = movie.imdbRating;
+                    let rtr = movie.Ratings[1].Value;
+                    let country = movie.Country;
+                    let language = movie.Language;
+                    let plot = movie.Plot;
+                    let actors = movie.Actors;
+                    console.log("---------------", "\nMovie:", name, "\nYear:", year, "\nRatings: \tIMDB:", imdbRating, "\tRotten Tomatoes:", rtr, "\nCountry:", country, "\nLanguage:", language, "\nActors:", actors,"\nPlot:", plot, "\n---------------");
+                    setTimeout(function () { newRequest(); }, 1500);
+                }).catch(function (error) {
+                    console.log("Sorry, Something didn't compute.  Please try again.", error);
+                    setTimeout(function () { movieThis(); }, 1500);
+                });
+        }
+    });
 };
 function doThis() {
 
