@@ -3,8 +3,9 @@ let keys = require("./keys.js");
 let inquirer = require("inquirer");
 let axios = require("axios");
 let moment = require('moment');
+let Spotify = require('node-spotify-api');
 
-let spotify = keys.spotify;
+
 // console.log(spotify);
 let omdb = keys.ombd;
 // console.log(omdb);
@@ -90,30 +91,54 @@ function concertThis() {
                         break;
                 }
             }).catch(function (error) {
-                console.log("---------------","\nThis is not a valid Artist/Band.  \nPlease enter the band name again.", "\n---------------");
-                
+                console.log("---------------", "\nThis is not a valid Artist/Band.  \nPlease enter the band name again.", "\n---------------");
+
                 setTimeout(function () { concertThis(); }, 1500);
             });
     });
 };
 
 function spotifyThis() {
-    switch (answer === "") {
-        case true:
+    let spotify = new Spotify(keys.spotify);
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "song",
+            message: "Which song would you like me to look up?.",
+        }
+    ]).then(function (answers) {
+        let song = answers.song
+        if (!song) {
+            // song = "The Sign"
+            //0hrBpAOgrt8RXigk83LLNE
+            spotify
+                .request('https://api.spotify.com/v1/tracks/0hrBpAOgrt8RXigk83LLNE')
+                .then(function (data) {
+                    // console.log(data);
+                    console.log("---------------","\nArtist:", data.artists[0].name, "\nSong name:", data.name, "\nPreview Link:", data.external_urls.spotify,"\n---------------");
+                    console.log("---------------");
+                })
+                .catch(function (err) {
+                    console.error('Error occurred: ' + err);
+                });
+        } else {
 
-            break;
+            spotify.search({ type: 'track', query: song, limit: 10 }, function (err, data) {
+                if (err) {
+                    return console.log('Error occurred: ' + err);
+                }
+                // console.log(song);
 
-        default:
-            let artists = [];
-            let song = "";
-            let songURL = "";
-            let album = "";
-            break;
-    }
+                // console.log(data.tracks.items[9].external_urls.spotify);
+                let songArrary = data.tracks.items
 
-
-
-
+                songArrary.forEach(i => {
+                    console.log("---------------","\nArtist:", i.artists[0].name, "\nSong name:", i.name, "\nPreview Link:", i.external_urls.spotify,"\n---------------");
+                });
+                setTimeout(function () { initCommand(); }, 1500);
+            });
+        }
+    });
 };
 
 function movieThis() {
