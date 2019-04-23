@@ -87,7 +87,7 @@ function concertThis() {
                             console.log("Venue Name:", i.venue, "\nLocation:", i.locCity + "," + i.locCountry, "\nEvent Date:", i.eventDate);
                             console.log("---------------");
                         });
-                        setTimeout(function () { initCommand(); }, 1500);
+                        setTimeout(function () { newRequest(); }, 1500);
                         break;
                 }
             }).catch(function (error) {
@@ -115,7 +115,8 @@ function spotifyThis() {
                 .request('https://api.spotify.com/v1/tracks/0hrBpAOgrt8RXigk83LLNE')
                 .then(function (data) {
                     // console.log(data);
-                    console.log("---------------","\nArtist:", data.artists[0].name, "\nSong name:", data.name, "\nPreview Link:", data.external_urls.spotify,"\n---------------");
+                    console.log("---------------", "\nArtist:", data.artists[0].name, "\nSong name:", data.name, "\nPreview Link:", data.external_urls.spotify, "\n---------------");
+                    setTimeout(function () { newRequest(); }, 1500);
                 })
                 .catch(function (err) {
                     console.error('Error occurred: ' + err);
@@ -132,19 +133,65 @@ function spotifyThis() {
                 let songArrary = data.tracks.items
 
                 songArrary.forEach(i => {
-                    console.log("---------------","\nArtist:", i.artists[0].name, "\nSong name:", i.name, "\nPreview Link:", i.external_urls.spotify,"\n---------------");
+                    console.log("---------------", "\nArtist:", i.artists[0].name, "\nSong name:", i.name, "\nPreview Link:", i.external_urls.spotify, "\n---------------");
                 });
-                setTimeout(function () { initCommand(); }, 1500);
+                setTimeout(function () { newRequest(); }, 1500);
             });
         }
     });
 };
 
 function movieThis() {
+    //Title of Movie
+    //Year movie came out
+    //IMDB Rating of movie
+    //Rotten Tomatoes rating of the movie.
+    ///Country where the movie was produced.
+    //language of the movie
+    //Plot of the movie
+    //Actors in the movie
+    //no movies Select Mr. Nobody
+
+    axios.get(url).then(
+        function (response) {});
 
 };
 function doThis() {
 
+};
+
+function newRequest() {
+    inquirer.prompt([
+        {
+            type: "list",
+            name: "choice",
+            message: "How else can I help you today?",
+            choices: ["Concert this", "Spotify this song", "Movie this", "Do what I say", "Exit"]
+        }
+    ]).then(function (answers) {
+        let action = answers.choice;
+        switch (action) {
+            case "Concert this":
+                concertThis();
+                break;
+
+            case "Spotify this song":
+                spotifyThis();
+                break;
+
+            case "Movie this":
+                movieThis();
+                break;
+
+            case "Do what I say":
+                doThis();
+                break;
+            case "Exit":
+                console.log("---------------", "\nThanks for using LIRI! \nPlease come back soon!", "\n---------------");
+                break;
+        }
+
+    })
 };
 
 initCommand();
