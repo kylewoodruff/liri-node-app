@@ -1,4 +1,5 @@
 require("dotenv").config();
+var fs = require("fs");
 let keys = require("./keys.js");
 let inquirer = require("inquirer");
 let axios = require("axios");
@@ -23,6 +24,7 @@ function initCommand() {
         }
     ]).then(function (answers) {
         let action = answers.choice;
+        // auditLog(answers.choice, "Initial Command");
         switch (action) {
             case "Concert this":
                 concertThis();
@@ -142,15 +144,6 @@ function spotifyThis() {
 };
 
 function movieThis() {
-    //Title of Movie
-    //Year movie came out
-    //IMDB Rating of movie
-    //Rotten Tomatoes rating of the movie.
-    ///Country where the movie was produced.
-    //language of the movie
-    //Plot of the movie
-    //Actors in the movie
-    //no movies Select Mr. Nobody
     inquirer.prompt([
         {
             type: "input",
@@ -203,7 +196,28 @@ function movieThis() {
     });
 };
 function doThis() {
+    fs.readFile("random.txt", "utf8", function(err,data) {
 
+        if (err) {
+            return console.log(err);
+        }
+        // console.log(data);
+        var dataArr = data.split(",");
+        if (dataArr[0] === "spotify-this-song") {
+            let spotify = new Spotify(keys.spotify);
+            spotify.search({ type: 'track', query: dataArr[1], limit: 10 }, function (err, data) {
+                if (err) {
+                    return console.log('Error occurred: ' + err);
+                }
+                let songArrary = data.tracks.items
+                songArrary.forEach(i => {
+                    console.log("---------------", "\nArtist:", i.artists[0].name, "\nSong name:", i.name, "\nAlbum:",i.album.name,"\nPreview Link:", i.external_urls.spotify, "\n---------------");
+                });
+                setTimeout(function () { newRequest(); }, 1500);
+            });
+        }
+        
+    });
 };
 
 function newRequest() {
@@ -237,6 +251,17 @@ function newRequest() {
                 break;
         }
 
+    })
+};
+
+function auditLog (command, value) {
+    let cmd = JSON.stringify(command);
+    let text = JSON.stringify(value);
+    fs.appendFile("log.txt",{cmd, text}, function(err){
+        if (err) {
+            console.log(err);
+            
+        }
     })
 };
 
